@@ -1,0 +1,18 @@
+/* =============================================================================
+   MAIN STYLESHEET
+   Entry point — establishes layer order, then imports partials.
+
+   Layer order (lowest to highest specificity):
+     reset → tokens → base → components → utilities
+
+   In production, use postcss-import to inline these at build time.
+   For development, this file can be referenced directly.
+   ============================================================================= */
+
+@layer reset, tokens, base, components, utilities;
+
+@import "./reset.css";
+@import "./tokens.css";
+@import "./base.css";
+@import "./components.css";
+@import "./utilities.css";

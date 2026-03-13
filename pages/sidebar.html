@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Starter — Sidebar Layout</title>
+  <meta name="description" content="Sidebar layout — content grid with filters or navigation in a sticky sidebar.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script>
+    (function () {
+      var stored = null;
+      try { stored = localStorage.getItem('theme-preference'); } catch (e) {}
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    /* Filter sidebar */
+    .filter-group {
+      padding-block: var(--space-5);
+      border-block-end: 1px solid var(--border-subtle);
+    }
+
+    .filter-group:last-child {
+      border-block-end: none;
+    }
+
+    .filter-group__title {
+      font-size: var(--size-xs);
+      font-weight: var(--weight-semibold);
+      letter-spacing: var(--tracking-wider);
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-block-end: var(--space-4);
+    }
+
+    .filter-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: var(--size-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-decoration: none;
+      transition:
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
+    }
+
+    .filter-item:hover {
+      background-color: var(--surface-sunken);
+      color: var(--text-primary);
+    }
+
+    .filter-item.is-active {
+      background-color: var(--accent-muted);
+      color: var(--text-primary);
+      font-weight: var(--weight-medium);
+    }
+
+    .filter-item__count {
+      margin-inline-start: auto;
+      font-size: var(--size-xs);
+      color: var(--text-tertiary);
+    }
+
+    /* Sort controls */
+    .sort-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      padding-block-end: var(--space-6);
+      border-block-end: 1px solid var(--border-subtle);
+      margin-block-end: var(--space-6);
+    }
+
+    .sort-bar__results {
+      font-size: var(--size-sm);
+      color: var(--text-tertiary);
+    }
+
+    .sort-bar__controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--size-xs);
+      color: var(--text-tertiary);
+    }
+
+    /* Post card variant */
+    .post-card {
+      display: grid;
+      grid-template-columns: 1fr;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      background-color: var(--surface-raised);
+      overflow: hidden;
+      text-decoration: none;
+      transition:
+        border-color var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-fast) var(--ease-out);
+    }
+
+    .post-card:hover {
+      border-color: var(--border-default);
+      box-shadow: var(--shadow-md);
+      color: inherit;
+    }
+
+    .post-card__body {
+      padding: var(--space-6);
+    }
+
+    .post-card__meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: var(--size-xs);
+      color: var(--text-tertiary);
+      margin-block-end: var(--space-3);
+    }
+
+    .post-card__title {
+      font-size: var(--size-lg);
+      font-family: var(--font-serif);
+      line-height: var(--leading-snug);
+      color: var(--text-primary);
+      margin-block-end: var(--space-3);
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+
+    .post-card:hover .post-card__title {
+      color: var(--accent-default);
+    }
+
+    .post-card__excerpt {
+      font-size: var(--size-sm);
+      color: var(--text-secondary);
+      line-height: var(--leading-relaxed);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .post-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--space-6);
+      border-block-start: 1px solid var(--border-subtle);
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <nav class="site-nav" aria-label="Main navigation">
+      <div class="container">
+        <div class="site-nav__inner">
+          <a href="../index.html" class="site-nav__logo">Starter</a>
+          <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open navigation">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <ul class="site-nav__links" id="nav-links" role="list">
+            <li><a href="../index.html" class="site-nav__link">Home</a></li>
+            <li><a href="landing.html" class="site-nav__link">Landing</a></li>
+            <li><a href="article.html" class="site-nav__link">Article</a></li>
+            <li><a href="sidebar.html" class="site-nav__link">Sidebar</a></li>
+            <li><a href="full-width.html" class="site-nav__link">Full Width</a></li>
+          </ul>
+          <div class="site-nav__actions">
+            <button class="theme-toggle" aria-label="Switch theme">
+              <svg class="theme-toggle__sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <svg class="theme-toggle__moon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M17.5 11.5A7.5 7.5 0 0 1 8.5 2.5a7.5 7.5 0 1 0 9 9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="site-main" id="main">
+
+    <div class="page-header">
+      <div class="container">
+        <p class="page-header__eyebrow">Writing</p>
+        <h1 class="page-header__title">All posts</h1>
+        <p class="page-header__lead">Notes on design, code, and the intersection of both.</p>
+      </div>
+    </div>
+
+    <div class="py-12">
+      <div class="container">
+        <div class="sidebar-layout">
+
+          <!-- Sidebar: Filters -->
+          <aside class="sidebar-layout__sidebar" aria-label="Filter posts">
+
+            <div class="filter-group">
+              <p class="filter-group__title">Topic</p>
+              <ul class="filter-list" role="list">
+                <li><a href="#" class="filter-item is-active" aria-current="true">All posts <span class="filter-item__count">12</span></a></li>
+                <li><a href="#" class="filter-item">Design systems <span class="filter-item__count">5</span></a></li>
+                <li><a href="#" class="filter-item">CSS architecture <span class="filter-item__count">4</span></a></li>
+                <li><a href="#" class="filter-item">Tooling <span class="filter-item__count">2</span></a></li>
+                <li><a href="#" class="filter-item">Process <span class="filter-item__count">1</span></a></li>
+              </ul>
+            </div>
+
+            <div class="filter-group">
+              <p class="filter-group__title">Year</p>
+              <ul class="filter-list" role="list">
+                <li><a href="#" class="filter-item is-active">2025 <span class="filter-item__count">6</span></a></li>
+                <li><a href="#" class="filter-item">2024 <span class="filter-item__count">4</span></a></li>
+                <li><a href="#" class="filter-item">2023 <span class="filter-item__count">2</span></a></li>
+              </ul>
+            </div>
+
+          </aside>
+
+          <!-- Main: Post List -->
+          <div>
+            <div class="sort-bar">
+              <p class="sort-bar__results">12 posts</p>
+              <div class="sort-bar__controls">
+                <span>Sort by</span>
+                <select aria-label="Sort posts" style="width: auto; padding-inline-end: var(--space-8);">
+                  <option>Most recent</option>
+                  <option>Oldest first</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-4" role="list">
+
+              <article role="listitem" data-reveal>
+                <a href="article.html" class="post-card">
+                  <div class="post-card__body">
+                    <div class="post-card__meta">
+                      <time datetime="2025-03-01">March 1, 2025</time>
+                      <span aria-hidden="true">·</span>
+                      <span>8 min read</span>
+                    </div>
+                    <h2 class="post-card__title">Understanding CSS Cascade Layers</h2>
+                    <p class="post-card__excerpt">
+                      How <code>@layer</code> eliminates specificity battles and makes large
+                      stylesheets predictable and maintainable by design.
+                    </p>
+                  </div>
+                  <div class="post-card__footer">
+                    <div class="tag-list">
+                      <span class="tag">CSS</span>
+                      <span class="tag">Architecture</span>
+                    </div>
+                    <span class="text-xs text-tertiary">Read more →</span>
+                  </div>
+                </a>
+              </article>
+
+              <article role="listitem" data-reveal data-reveal-delay="60">
+                <a href="article.html" class="post-card">
+                  <div class="post-card__body">
+                    <div class="post-card__meta">
+                      <time datetime="2025-02-12">February 12, 2025</time>
+                      <span aria-hidden="true">·</span>
+                      <span>6 min read</span>
+                    </div>
+                    <h2 class="post-card__title">The Three-Tier Token Hierarchy</h2>
+                    <p class="post-card__excerpt">
+                      Primitives, semantic tokens, and component tokens: how separating
+                      concerns in your design token structure unlocks true theming flexibility.
+                    </p>
+                  </div>
+                  <div class="post-card__footer">
+                    <div class="tag-list">
+                      <span class="tag">Design systems</span>
+                      <span class="tag">Tokens</span>
+                    </div>
+                    <span class="text-xs text-tertiary">Read more →</span>
+                  </div>
+                </a>
+              </article>
+
+              <article role="listitem" data-reveal data-reveal-delay="120">
+                <a href="article.html" class="post-card">
+                  <div class="post-card__body">
+                    <div class="post-card__meta">
+                      <time datetime="2025-01-20">January 20, 2025</time>
+                      <span aria-hidden="true">·</span>
+                      <span>5 min read</span>
+                    </div>
+                    <h2 class="post-card__title">Dark Mode Without the Complexity</h2>
+                    <p class="post-card__excerpt">
+                      Making dark mode a semantic token problem rather than a utility-class
+                      arms race. One data attribute, one set of overrides, done.
+                    </p>
+                  </div>
+                  <div class="post-card__footer">
+                    <div class="tag-list">
+                      <span class="tag">CSS</span>
+                      <span class="tag">Theming</span>
+                    </div>
+                    <span class="text-xs text-tertiary">Read more →</span>
+                  </div>
+                </a>
+              </article>
+
+              <article role="listitem" data-reveal data-reveal-delay="180">
+                <a href="article.html" class="post-card">
+                  <div class="post-card__body">
+                    <div class="post-card__meta">
+                      <time datetime="2024-12-05">December 5, 2024</time>
+                      <span aria-hidden="true">·</span>
+                      <span>10 min read</span>
+                    </div>
+                    <h2 class="post-card__title">Eleventy for Product Designers</h2>
+                    <p class="post-card__excerpt">
+                      Why a static site generator might be the right choice for your
+                      portfolio — and how to think about it as a designer who codes.
+                    </p>
+                  </div>
+                  <div class="post-card__footer">
+                    <div class="tag-list">
+                      <span class="tag">Tooling</span>
+                      <span class="tag">Eleventy</span>
+                    </div>
+                    <span class="text-xs text-tertiary">Read more →</span>
+                  </div>
+                </a>
+              </article>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__inner">
+        <p class="site-footer__copy">&copy; 2025 Starter.</p>
+        <nav class="site-footer__links" aria-label="Footer navigation">
+          <a href="../index.html" class="site-footer__link">Home</a>
+          <a href="landing.html" class="site-footer__link">Landing</a>
+          <a href="article.html" class="site-footer__link">Article</a>
+          <a href="full-width.html" class="site-footer__link">Full Width</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="../js/main.js"></script>
+</body>
+</html>

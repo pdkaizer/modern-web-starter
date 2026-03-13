@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Starter — Article Layout</title>
+  <meta name="description" content="Article page layout — long-form prose with table of contents and reading progress.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script>
+    (function () {
+      var stored = null;
+      try { stored = localStorage.getItem('theme-preference'); } catch (e) {}
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../css/main.css">
+
+  <style>
+    /* Reading progress bar */
+    .reading-progress {
+      position: fixed;
+      inset-block-start: 0;
+      inset-inline: 0;
+      height: 2px;
+      background-color: var(--accent-default);
+      transform-origin: left;
+      transform: scaleX(0);
+      z-index: 200;
+      transition: transform 0.1s linear;
+    }
+
+    /* Table of contents */
+    .toc {
+      font-size: var(--size-xs);
+    }
+
+    .toc__title {
+      font-family: var(--font-sans);
+      font-size: var(--size-xs);
+      font-weight: var(--weight-semibold);
+      letter-spacing: var(--tracking-widest);
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-block-end: var(--space-4);
+    }
+
+    .toc__list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .toc__link {
+      display: block;
+      padding: var(--space-2) 0;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      border-inline-start: 2px solid var(--border-subtle);
+      padding-inline-start: var(--space-4);
+      line-height: var(--leading-snug);
+      transition:
+        color var(--duration-fast) var(--ease-out),
+        border-color var(--duration-fast) var(--ease-out);
+    }
+
+    .toc__link:hover,
+    .toc__link.is-active {
+      color: var(--text-primary);
+      border-inline-start-color: var(--accent-default);
+    }
+
+    /* Article layout */
+    .article-layout {
+      padding-block: var(--space-16);
+    }
+
+    .article-layout__grid {
+      display: grid;
+      grid-template-columns: 1fr minmax(0, var(--layout-content-width)) var(--layout-sidebar-width);
+      gap: var(--space-16);
+      align-items: start;
+    }
+
+    .article-layout__toc {
+      position: sticky;
+      inset-block-start: calc(var(--nav-height) + var(--space-8));
+      order: -1;
+    }
+
+    .article-layout__aside {
+      position: sticky;
+      inset-block-start: calc(var(--nav-height) + var(--space-8));
+    }
+
+    @media (max-width: 1100px) {
+      .article-layout__grid {
+        grid-template-columns: 1fr;
+      }
+      .article-layout__toc {
+        position: static;
+        order: 0;
+        display: none; /* Hidden on mobile for brevity — add toggle to show */
+      }
+      .article-layout__aside {
+        position: static;
+      }
+    }
+
+    /* Author card */
+    .author-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-5);
+      background-color: var(--surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+    }
+
+    .author-card__avatar {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--radius-full);
+      background-color: var(--surface-sunken);
+      flex-shrink: 0;
+    }
+
+    .author-card__name {
+      font-size: var(--size-sm);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+
+    .author-card__bio {
+      font-size: var(--size-xs);
+      color: var(--text-tertiary);
+      margin-block-start: var(--space-1);
+    }
+
+    /* Share links */
+    .share-links {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .share-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background-color: var(--surface-sunken);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: var(--size-xs);
+      font-weight: var(--weight-medium);
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition:
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
+    }
+
+    .share-link:hover {
+      background-color: var(--surface-raised);
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="reading-progress" id="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <nav class="site-nav" aria-label="Main navigation">
+      <div class="container">
+        <div class="site-nav__inner">
+          <a href="../index.html" class="site-nav__logo">Starter</a>
+          <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open navigation">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <ul class="site-nav__links" id="nav-links" role="list">
+            <li><a href="../index.html" class="site-nav__link">Home</a></li>
+            <li><a href="landing.html" class="site-nav__link">Landing</a></li>
+            <li><a href="article.html" class="site-nav__link">Article</a></li>
+            <li><a href="sidebar.html" class="site-nav__link">Sidebar</a></li>
+            <li><a href="full-width.html" class="site-nav__link">Full Width</a></li>
+          </ul>
+          <div class="site-nav__actions">
+            <button class="theme-toggle" aria-label="Switch theme">
+              <svg class="theme-toggle__sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <svg class="theme-toggle__moon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M17.5 11.5A7.5 7.5 0 0 1 8.5 2.5a7.5 7.5 0 1 0 9 9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="site-main" id="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="container--narrow">
+        <p class="page-header__eyebrow">CSS Architecture</p>
+        <h1 class="page-header__title">Understanding CSS Cascade Layers</h1>
+        <p class="page-header__lead">
+          How to use <code>@layer</code> to eliminate specificity battles, keep
+          stylesheets maintainable, and ship more predictable CSS.
+        </p>
+        <div class="page-header__meta">
+          <time datetime="2025-03-01">March 1, 2025</time>
+          <span aria-hidden="true">·</span>
+          <span>8 min read</span>
+          <span aria-hidden="true">·</span>
+          <div class="tag-list">
+            <a href="#" class="tag">CSS</a>
+            <a href="#" class="tag">Architecture</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article Body -->
+    <div class="article-layout">
+      <div class="container">
+        <div class="article-layout__grid">
+
+          <!-- Table of Contents -->
+          <nav class="article-layout__toc" aria-label="Table of contents">
+            <nav class="toc">
+              <p class="toc__title">On this page</p>
+              <ul class="toc__list" role="list">
+                <li><a href="#introduction" class="toc__link">Introduction</a></li>
+                <li><a href="#what-are-layers" class="toc__link">What are cascade layers?</a></li>
+                <li><a href="#layer-order" class="toc__link">Declaring layer order</a></li>
+                <li><a href="#with-tokens" class="toc__link">Layers with design tokens</a></li>
+                <li><a href="#practical-example" class="toc__link">A practical example</a></li>
+                <li><a href="#utilities" class="toc__link">Where utilities fit</a></li>
+                <li><a href="#summary" class="toc__link">Summary</a></li>
+              </ul>
+            </nav>
+          </nav>
+
+          <!-- Article Content -->
+          <article>
+            <div class="prose">
+
+              <h2 id="introduction">Introduction</h2>
+              <p>
+                CSS specificity has always been a source of friction. The moment a codebase grows
+                beyond a single author, the temptation to add <code>!important</code> or reach for
+                increasingly specific selectors creeps in. Cascade layers, introduced with broad
+                browser support in 2022, offer a structural solution.
+              </p>
+
+              <div class="callout callout--accent">
+                <p class="callout__title">Browser support</p>
+                <p>
+                  <code>@layer</code> is supported in all modern browsers as of March 2022.
+                  Baseline support covers Chrome 99+, Firefox 97+, and Safari 15.4+.
+                </p>
+              </div>
+
+              <h2 id="what-are-layers">What are cascade layers?</h2>
+              <p>
+                A cascade layer is a named bucket in the CSS cascade. Within each layer, specificity
+                works exactly as you'd expect. But between layers, the layer order determines
+                precedence — not specificity.
+              </p>
+              <p>
+                This is the key insight: a class selector in a higher-priority layer will always
+                win over an ID selector in a lower-priority layer, regardless of specificity.
+              </p>
+
+              <blockquote>
+                Layers let you reason about your CSS at the system level, not the selector level.
+              </blockquote>
+
+              <h2 id="layer-order">Declaring layer order</h2>
+              <p>
+                The layer order is established by the first <code>@layer</code> declaration
+                encountered by the parser. This starter declares layer order in <code>main.css</code>:
+              </p>
+
+              <pre><code>@layer reset, tokens, base, components, utilities;</code></pre>
+
+              <p>
+                Later layers override earlier ones. So utilities — placed last — will
+                always win over components, which will win over base styles, and so on.
+                This is intentional. Utilities are escape valves; they should beat everything.
+              </p>
+
+              <h2 id="with-tokens">Layers with design tokens</h2>
+              <p>
+                Placing your CSS custom properties inside a <code>tokens</code> layer has a
+                useful side effect: components in the <code>components</code> layer that reference
+                those variables can be overridden in the <code>utilities</code> layer — all without
+                specificity battles.
+              </p>
+
+              <h2 id="practical-example">A practical example</h2>
+              <p>
+                Consider a <code>.card</code> component that has a default background. A utility
+                class can override it cleanly:
+              </p>
+
+              <pre><code>/* components layer */
+.card {
+  background-color: var(--surface-raised);
+}
+
+/* utilities layer — always wins */
+.bg-sunken {
+  background-color: var(--surface-sunken);
+}</code></pre>
+
+              <p>
+                Without layers, this would require careful specificity management.
+                With layers, the outcome is predictable by rule.
+              </p>
+
+              <h2 id="utilities">Where utilities fit</h2>
+              <p>
+                This starter uses a hybrid composition model: semantic component classes for
+                complex, stateful patterns; utilities for single-purpose overrides like spacing,
+                color, and typography adjustments. Utilities in the <code>utilities</code> layer
+                are the highest-specificity bucket in normal flow.
+              </p>
+
+              <h2 id="summary">Summary</h2>
+              <p>
+                Cascade layers give you a clear mental model for how styles relate to each other
+                at the system level. The five-layer stack in this starter — <code>reset</code>,
+                <code>tokens</code>, <code>base</code>, <code>components</code>,
+                <code>utilities</code> — covers most real-world needs without overcomplicating
+                the architecture.
+              </p>
+
+              <p>
+                Next, explore how the three-tier token system maps onto this layer structure, and
+                how dark mode becomes a single semantic concern rather than a scattered
+                set of overrides.
+              </p>
+
+            </div>
+          </article>
+
+          <!-- Aside -->
+          <aside class="article-layout__aside" aria-label="Article metadata">
+            <div class="flex flex-col gap-6">
+
+              <div class="author-card">
+                <div class="author-card__avatar" aria-hidden="true"></div>
+                <div>
+                  <p class="author-card__name">Your Name</p>
+                  <p class="author-card__bio">Designer &amp; developer building for the web.</p>
+                </div>
+              </div>
+
+              <div>
+                <p class="toc__title mb-4">Share</p>
+                <div class="share-links">
+                  <a href="#" class="share-link">Copy link</a>
+                  <a href="#" class="share-link">Share on X</a>
+                </div>
+              </div>
+
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__inner">
+        <p class="site-footer__copy">&copy; 2025 Starter.</p>
+        <nav class="site-footer__links" aria-label="Footer navigation">
+          <a href="../index.html" class="site-footer__link">Home</a>
+          <a href="landing.html" class="site-footer__link">Landing</a>
+          <a href="sidebar.html" class="site-footer__link">Sidebar</a>
+          <a href="full-width.html" class="site-footer__link">Full Width</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import '../js/main.js';
+
+    // Reading progress bar
+    const bar = document.getElementById('reading-progress');
+    if (bar) {
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+        bar.style.transform = `scaleX(${progress})`;
+        bar.setAttribute('aria-valuenow', Math.round(progress * 100));
+      }, { passive: true });
+    }
+
+    // Active TOC link on scroll
+    const headings = document.querySelectorAll('article h2[id], article h3[id]');
+    const tocLinks = document.querySelectorAll('.toc__link');
+
+    if (headings.length && tocLinks.length) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            tocLinks.forEach(link => {
+              link.classList.toggle('is-active', link.getAttribute('href') === `#${entry.target.id}`);
+            });
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+
+      headings.forEach(h => observer.observe(h));
+    }
+  </script>
+</body>
+</html>
