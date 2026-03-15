@@ -322,6 +322,15 @@ Control stagger timing with `data-reveal-delay="80"` (milliseconds).
 - **No framework JS** (no React, no Vue) unless the project scope changes significantly
 - **No `!important`** — solve it with layers instead
 - **No inline styles** for design decisions — use tokens and component classes
+- **Exception — data-driven custom properties:** when a value comes from data rather than a design decision (e.g. a chart bar's height), set it as a CSS custom property inline and resolve it in the stylesheet. This keeps the design concern in CSS while allowing the value to vary per-element:
+  ```html
+  <!-- HTML: data value as a custom property -->
+  <div class="sparkline__bar" style="--bar-height: 72%"></div>
+  ```
+  ```css
+  /* CSS: design decision stays in the stylesheet */
+  .sparkline__bar { height: var(--bar-height, 50%); }
+  ```
 - **No hardcoded colours** — always reference a token
 - **No specificity hacks** (`.foo.foo`, `#app .component`) — layers solve this
 - **No styles outside a layer block** in any of the CSS partials
