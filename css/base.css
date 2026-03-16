@@ -61,8 +61,8 @@
   }
 
   a:hover {
-    color: var(--accent-default);
-    text-decoration-color: var(--accent-default);
+    color: var(--accent-fg);
+    text-decoration-color: var(--accent-fg);
   }
 
   strong,

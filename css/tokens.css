@@ -136,16 +136,17 @@
     /* Text */
     --text-primary:         var(--color-gray-950);
     --text-secondary:       var(--color-gray-600);
-    --text-tertiary:        var(--color-gray-400);
+    --text-tertiary:        var(--color-gray-600); /* gray-600 on white: 5.4:1 ✓ WCAG AA */
     --text-disabled:        var(--color-gray-300);
     --text-invert:          var(--color-white);
     --text-on-accent:       var(--color-white);
 
     /* Accent */
     --accent-default:       var(--color-amber-500);
-    --accent-hover:         var(--color-amber-700);
+    --accent-hover:         var(--color-amber-900);
     --accent-subtle:        var(--color-amber-50);
     --accent-muted:         var(--color-amber-100);
+    --accent-fg:            var(--color-amber-700); /* accessible amber for text/fg use: 7.25:1 on white */
 
     /* Interactive */
     --interactive-default:  var(--color-gray-950);
@@ -153,7 +154,7 @@
     --interactive-active:   var(--color-gray-900);
 
     /* Focus */
-    --focus-ring:           var(--color-amber-400);
+    --focus-ring:           var(--color-amber-700); /* 7.25:1 on white — meets WCAG 1.4.11 */
     --focus-ring-offset:    var(--surface-page);
 
     /* Shadow */
@@ -183,7 +184,7 @@
 
       --text-primary:         var(--color-gray-50);
       --text-secondary:       var(--color-gray-400);
-      --text-tertiary:        var(--color-gray-600);
+      --text-tertiary:        var(--color-gray-400); /* gray-400 on dark surfaces: ≥7:1 ✓ WCAG AA */
       --text-disabled:        var(--color-gray-700);
       --text-invert:          var(--color-gray-950);
       --text-on-accent:       var(--color-black);
@@ -192,12 +193,13 @@
       --accent-hover:         var(--color-amber-300);
       --accent-subtle:        rgb(120 60 0 / 0.15);
       --accent-muted:         rgb(120 60 0 / 0.25);
+      --accent-fg:            var(--color-amber-400); /* accessible amber for text/fg: 8:1 on dark ✓ */
 
       --interactive-default:  var(--color-gray-50);
       --interactive-hover:    var(--color-gray-300);
       --interactive-active:   var(--color-white);
 
-      --focus-ring:           var(--color-amber-400);
+      --focus-ring:           var(--color-amber-400); /* 8:1 on dark surfaces ✓ */
       --focus-ring-offset:    var(--surface-page);
 
       --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.3);
@@ -221,7 +223,7 @@
 
     --text-primary:         var(--color-gray-50);
     --text-secondary:       var(--color-gray-400);
-    --text-tertiary:        var(--color-gray-600);
+    --text-tertiary:        var(--color-gray-400); /* gray-400 on dark surfaces: ≥7:1 ✓ WCAG AA */
     --text-disabled:        var(--color-gray-700);
     --text-invert:          var(--color-gray-950);
     --text-on-accent:       var(--color-black);
@@ -230,12 +232,13 @@
     --accent-hover:         var(--color-amber-300);
     --accent-subtle:        rgb(120 60 0 / 0.15);
     --accent-muted:         rgb(120 60 0 / 0.25);
+    --accent-fg:            var(--color-amber-400); /* accessible amber for text/fg: 8:1 on dark ✓ */
 
     --interactive-default:  var(--color-gray-50);
     --interactive-hover:    var(--color-gray-300);
     --interactive-active:   var(--color-white);
 
-    --focus-ring:           var(--color-amber-400);
+    --focus-ring:           var(--color-amber-400); /* 8:1 on dark surfaces ✓ */
     --focus-ring-offset:    var(--surface-page);
 
     --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.3);

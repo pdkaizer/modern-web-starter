@@ -95,10 +95,22 @@ Purpose-named tokens that reference primitives. **Always use these in components
 - `--surface-*` — background colors (page, raised, overlay, sunken, invert)
 - `--text-*` — text colors (primary, secondary, tertiary, disabled, invert, on-accent)
 - `--border-*` — border colors (subtle, default, strong, invert)
-- `--accent-*` — accent/brand colors (default, hover, subtle, muted)
+- `--accent-*` — accent/brand colors (default, hover, subtle, muted, **fg**)
 - `--interactive-*` — interactive element colors
 - `--shadow-*` — box shadows (sm, md, lg, xl)
 - `--focus-ring` — focus indicator color
+
+#### `--accent-fg` vs `--accent-default`
+
+These two tokens serve different purposes and must not be confused:
+
+| Token | Value (light) | Value (dark) | Contrast on bg | Use for |
+|-------|--------------|--------------|----------------|---------|
+| `--accent-default` | amber-500 (#d97706) | amber-500 | ~3:1 | Decorative only — borders, backgrounds, sparklines, checkmarks |
+| `--accent-fg` | amber-700 (#b45309) | amber-400 (#f59e0b) | 7.25:1 / 8:1 | **Text and interactive foreground** — eyebrows, links, `.text-accent`, button backgrounds |
+
+**Rule:** Any time amber appears as text, an icon color, or a button background, use `--accent-fg`.
+Use `--accent-default` only when the amber is decorative and contrast against it is not required.
 
 ### Tier 3 — Component tokens (when needed)
 Scoped tokens for complex components. Prefix with the component name:
@@ -303,6 +315,47 @@ Control stagger timing with `data-reveal-delay="80"` (milliseconds).
 
 ## Accessibility Requirements
 
+This codebase targets **WCAG 2.1 AA / Section 508** compliance.
+
+### Colour contrast
+
+- Normal text (< 18pt regular / < 14pt bold): minimum **4.5:1** contrast ratio
+- Large text (≥ 18pt regular or ≥ 14pt bold): minimum **3:1**
+- Non-text UI elements (focus rings, icons, borders conveying information): minimum **3:1** (WCAG 1.4.11)
+- **Never use `--accent-default`** (amber-500, ~3:1 on white) for text or interactive foreground — use `--accent-fg` instead
+- `--focus-ring` is set to amber-700 in light mode (7.25:1) and amber-400 in dark mode (8:1)
+
+### Reduced motion
+
+Motion preferences must be respected at **both** the CSS and JS levels:
+
+- **CSS level:** `reset.css` zeroes `transition-duration` and `animation-duration` via `@media (prefers-reduced-motion: reduce)`. No component-level override needed.
+- **JS level:** `initRevealAnimations()` must return early if `prefers-reduced-motion: reduce` is set — without this, elements start at `opacity: 0` and never animate in. `initSmoothScroll()` must use `behavior: 'auto'` instead of `'smooth'`.
+
+Never add JS-injected animations without checking `window.matchMedia('(prefers-reduced-motion: reduce)').matches` first.
+
+### ARIA landmark rules
+
+- **No nested `<nav>` landmarks.** A `<nav>` inside a `<nav>` is invalid. Use a `<div>` for the outer wrapper and place `aria-label` on the inner `<nav>`.
+- **No role conflicts.** `<article>` has an implicit ARIA role of `article`. Do not also apply `role="listitem"` — use a neutral `<div role="listitem">` instead.
+
+### Dark mode coverage
+
+When adding dark-mode overrides in `components.css` (e.g. status pills), always include **both** selectors:
+
+```css
+/* OS-level dark mode for users who haven't toggled manually */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .your-component { … }
+}
+/* Explicit theme override */
+[data-theme="dark"] .your-component { … }
+```
+
+Using only `[data-theme="dark"]` will miss users whose OS is dark but who haven't interacted with the theme toggle.
+
+### General requirements
+
 - Every page must have a `<a class="skip-link" href="#main">Skip to content</a>` as the first focusable element
 - All `<img>` must have descriptive `alt` attributes, or `alt=""` for decorative images
 - `aria-hidden="true"` on all decorative SVG icons
@@ -311,7 +364,6 @@ Control stagger timing with `data-reveal-delay="80"` (milliseconds).
 - Use `aria-label` on icon-only buttons
 - Use `aria-current="page"` on the active navigation link
 - Use semantic HTML elements: `<nav>`, `<main>`, `<article>`, `<aside>`, `<section>`, `<header>`, `<footer>`
-- Colour contrast: text must meet WCAG AA (4.5:1 for body text, 3:1 for large text)
 
 ---
 

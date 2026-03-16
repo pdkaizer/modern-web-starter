@@ -171,7 +171,8 @@ function initSmoothScroll() {
         10
       ) || 64;
       const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
-      window.scrollTo({ top, behavior: 'smooth' });
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      window.scrollTo({ top, behavior });
       history.replaceState(null, '', `#${id}`);
     });
   });
@@ -185,6 +186,9 @@ function initSmoothScroll() {
 
 function initRevealAnimations() {
   if (!('IntersectionObserver' in window)) return;
+
+  // Respect user motion preference — skip animation entirely; elements stay visible
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const style = document.createElement('style');
   style.textContent = `

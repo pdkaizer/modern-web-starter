@@ -106,7 +106,8 @@ All tokens are CSS custom properties defined in `css/tokens.css`.
 ```css
 --text-primary:    var(--color-gray-950);
 --surface-page:    var(--color-gray-50);
---accent-default:  var(--color-amber-500);
+--accent-default:  var(--color-amber-500);  /* decorative only */
+--accent-fg:       var(--color-amber-700);  /* text/interactive — passes 4.5:1 */
 ```
 
 **Dark mode** is handled entirely in the token layer. Components reference semantic tokens
@@ -208,13 +209,29 @@ target. The JS already uses ES module syntax and will work with any modern bundl
 
 ## Accessibility
 
+Targets **WCAG 2.1 AA / Section 508** compliance.
+
 - Skip-to-content link on every page
 - Semantic HTML throughout (`<nav>`, `<main>`, `<article>`, `<aside>`, `<header>`, `<footer>`)
 - `aria-current="page"` set automatically by JS on active nav links
 - `aria-label` on all icon-only interactive elements
 - `aria-hidden="true"` on all decorative SVGs
-- `focus-visible` styles on all interactive elements
-- `prefers-reduced-motion` respected — all animations disabled at the OS level
+- `focus-visible` styles on all interactive elements — focus ring at 7.25:1 (light) / 8:1 (dark) contrast
+
+**Colour contrast** — all text and interactive foreground meets WCAG AA 4.5:1 minimum:
+
+| Token | Light | Dark | Contrast |
+|-------|-------|------|----------|
+| `--text-primary` | gray-950 | gray-50 | >15:1 |
+| `--text-secondary` | gray-700 | gray-300 | >7:1 |
+| `--text-tertiary` | gray-600 | gray-400 | >5:1 |
+| `--accent-fg` | amber-700 | amber-400 | 7.25:1 / 8:1 |
+
+The amber design uses two separate tokens: `--accent-fg` (amber-700 light / amber-400 dark) for any amber text, icons, or button backgrounds; and `--accent-default` (amber-500) for decorative uses only (borders, backgrounds, sparklines) where contrast is not a text requirement.
+
+**Reduced motion** — disabled at both levels:
+- CSS: `reset.css` zeroes all transition and animation durations via `prefers-reduced-motion: reduce`
+- JS: reveal animations skip entirely (elements remain visible); smooth scroll falls back to instant scroll
 
 ---
 

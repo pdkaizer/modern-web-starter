@@ -98,7 +98,7 @@
   .text-primary   { color: var(--text-primary); }
   .text-secondary { color: var(--text-secondary); }
   .text-tertiary  { color: var(--text-tertiary); }
-  .text-accent    { color: var(--accent-default); }
+  .text-accent    { color: var(--accent-fg); }
   .text-invert    { color: var(--text-invert); }
 
   .truncate {
