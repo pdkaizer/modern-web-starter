@@ -196,4 +196,4 @@ Features used: CSS Cascade Layers, CSS Custom Properties, Container Queries (whe
 
 ## License
 
-MIT
+[OSAASY](https://osaasy.dev)
