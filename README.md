@@ -14,7 +14,32 @@ No frameworks. No build step required to get going. Strong architectural opinion
 - **Semantic HTML** — accessible, meaningful markup on every page
 - **Four page layouts** — home, landing, article, sidebar, full-width/dashboard
 - **Vanilla JS** — theme toggle, mobile nav, scroll-triggered reveal animations
+- **Open Graph tags** — `og:type`, `og:url`, `og:title`, `og:description`, `og:image` on every page
 - **CLAUDE.md** — comprehensive context file for AI-assisted development
+
+---
+
+## File structure
+
+```
+/
+├── index.html                  # Home / component showcase
+├── pages/
+│   ├── landing.html            # Marketing landing page layout
+│   ├── article.html            # Long-form prose layout with TOC
+│   ├── sidebar.html            # Content listing with filter sidebar
+│   └── full-width.html         # App shell / dashboard layout
+├── css/
+│   ├── main.css                # Entry point — layer order, imports
+│   ├── tokens.css              # Design tokens (primitives → semantic → component)
+│   ├── reset.css               # Opinionated modern reset
+│   ├── base.css                # Global element styles
+│   ├── components.css          # Reusable UI component classes
+│   └── utilities.css           # Single-purpose utility classes
+├── js/
+│   └── main.js                 # Theme toggle, mobile nav, scroll utilities
+└── images/                     # Static image assets (og-image.png, favicons, etc.)
+```
 
 ---
 
@@ -142,6 +167,29 @@ Use `data-reveal-delay` (milliseconds) to stagger groups:
 <div class="card" data-reveal data-reveal-delay="80">Second</div>
 <div class="card" data-reveal data-reveal-delay="160">Third</div>
 ```
+
+---
+
+## SEO and Open Graph
+
+Every page includes a full set of Open Graph meta tags immediately after `<meta name="description">`:
+
+```html
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:title" content="Page Title">
+<meta property="og:description" content="Page description.">
+<meta property="og:image" content="https://example.com/og-image.png">
+```
+
+`pages/article.html` uses `og:type="article"`. All other pages use `og:type="website"`.
+
+**Before deploying**, replace the placeholder values:
+- `og:url` — set to the canonical URL for each page
+- `og:image` — point to your OG image in the `images/` directory (recommended size: 1200×630px)
+
+The `images/` directory is the intended home for the OG image, favicons, and any other
+static assets referenced in HTML.
 
 ---
 
