@@ -19,223 +19,7 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="../css/main.css">
-
-  <style>
-    /* App shell — no outer max-width for a dashboard feel */
-    .app-shell {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      min-block-size: 100dvh;
-    }
-
-    /* App sidebar */
-    .app-sidebar {
-      background-color: var(--surface-raised);
-      border-inline-end: 1px solid var(--border-subtle);
-      position: sticky;
-      inset-block-start: 0;
-      block-size: 100dvh;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      padding: var(--space-6);
-      gap: var(--space-2);
-    }
-
-    .app-sidebar__logo {
-      font-family: var(--font-serif);
-      font-size: var(--size-md);
-      letter-spacing: var(--tracking-snug);
-      color: var(--text-primary);
-      padding: var(--space-3) var(--space-3);
-      margin-block-end: var(--space-4);
-      text-decoration: none;
-    }
-
-    .app-sidebar__section {
-      font-size: var(--size-3xs);
-      font-weight: var(--weight-semibold);
-      letter-spacing: var(--tracking-widest);
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      padding: var(--space-2) var(--space-3);
-      margin-block-start: var(--space-4);
-    }
-
-    .app-sidebar__link {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-2-5, 0.625rem) var(--space-3);
-      border-radius: var(--radius-md);
-      font-size: var(--size-sm);
-      font-weight: var(--weight-medium);
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition:
-        background-color var(--duration-fast) var(--ease-out),
-        color var(--duration-fast) var(--ease-out);
-    }
-
-    .app-sidebar__link:hover {
-      background-color: var(--surface-sunken);
-      color: var(--text-primary);
-    }
-
-    .app-sidebar__link.is-active {
-      background-color: var(--surface-sunken);
-      color: var(--text-primary);
-    }
-
-    .app-sidebar__icon {
-      width: 1rem;
-      height: 1rem;
-      flex-shrink: 0;
-      opacity: 0.7;
-    }
-
-    .app-sidebar__spacer {
-      flex: 1;
-    }
-
-    /* App content area */
-    .app-content {
-      display: flex;
-      flex-direction: column;
-      min-block-size: 0;
-    }
-
-    .app-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-4);
-      padding: var(--space-4) var(--space-8);
-      border-block-end: 1px solid var(--border-subtle);
-      background-color: color-mix(in srgb, var(--surface-page) 85%, transparent);
-      backdrop-filter: blur(12px);
-      position: sticky;
-      inset-block-start: 0;
-      z-index: 50;
-    }
-
-    .app-topbar__title {
-      font-size: var(--size-sm);
-      font-weight: var(--weight-semibold);
-      font-family: var(--font-sans);
-      color: var(--text-primary);
-    }
-
-    .app-topbar__actions {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-    }
-
-    .app-body {
-      flex: 1;
-      padding: var(--space-8);
-    }
-
-    /* Data table */
-    .data-table-wrapper {
-      overflow-x: auto;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      background-color: var(--surface-raised);
-    }
-
-    .data-table {
-      width: 100%;
-      font-size: var(--size-sm);
-    }
-
-    .data-table th {
-      font-size: var(--size-xs);
-      font-weight: var(--weight-semibold);
-      letter-spacing: var(--tracking-wider);
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      padding: var(--space-4) var(--space-5);
-      border-block-end: 1px solid var(--border-subtle);
-      text-align: start;
-      white-space: nowrap;
-      background-color: var(--surface-sunken);
-    }
-
-    .data-table th:first-child { border-radius: var(--radius-lg) 0 0 0; }
-    .data-table th:last-child  { border-radius: 0 var(--radius-lg) 0 0; }
-
-    .data-table td {
-      padding: var(--space-4) var(--space-5);
-      border-block-end: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      vertical-align: middle;
-    }
-
-    .data-table tr:last-child td {
-      border-block-end: none;
-    }
-
-    .data-table tr:hover td {
-      background-color: var(--surface-sunken);
-    }
-
-    /* Status pills */
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-1) var(--space-3);
-      border-radius: var(--radius-full);
-      font-size: var(--size-xs);
-      font-weight: var(--weight-medium);
-    }
-
-    .status::before {
-      content: '';
-      width: 0.4rem;
-      height: 0.4rem;
-      border-radius: var(--radius-full);
-      background-color: currentColor;
-    }
-
-    .status--live    { color: #16a34a; background-color: #dcfce7; }
-    .status--draft   { color: var(--text-tertiary); background-color: var(--surface-sunken); border: 1px solid var(--border-subtle); }
-    .status--review  { color: #d97706; background-color: #fef3c7; }
-    .status--archived{ color: #6b7280; background-color: #f3f4f6; }
-
-    [data-theme="dark"] .status--live    { color: #4ade80; background-color: rgb(22 163 74 / 0.15); }
-    [data-theme="dark"] .status--review  { color: #fcd34d; background-color: rgb(217 119 6 / 0.15); }
-    [data-theme="dark"] .status--archived{ color: #9ca3af; background-color: rgb(107 114 128 / 0.15); }
-
-    /* Mini sparkline placeholder */
-    .sparkline {
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 1.5rem;
-      width: 4rem;
-    }
-
-    .sparkline__bar {
-      flex: 1;
-      background-color: var(--accent-default);
-      border-radius: 2px 2px 0 0;
-      opacity: 0.7;
-    }
-
-    @media (max-width: 900px) {
-      .app-shell {
-        grid-template-columns: 1fr;
-      }
-      .app-sidebar {
-        display: none; /* Collapsed on mobile — add toggle for production */
-      }
-    }
-  </style>
-</head>
+  <link rel="stylesheet" href="../css/main.css"></head>
 <body>
 
   <a class="skip-link" href="#main">Skip to content</a>
@@ -290,12 +74,12 @@
 
       <div class="app-sidebar__spacer"></div>
 
-      <button class="theme-toggle" style="align-self: flex-start; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); display: flex; align-items: center; gap: var(--space-3); width: 100%; font-size: var(--size-sm); color: var(--text-secondary);" aria-label="Switch theme">
-        <svg class="theme-toggle__sun" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="width:1rem;height:1rem;flex-shrink:0;">
+      <button class="app-sidebar__theme-toggle theme-toggle" aria-label="Switch theme">
+        <svg class="theme-toggle__sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/>
           <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        <svg class="theme-toggle__moon" viewBox="0 0 20 20" fill="none" aria-hidden="true" style="width:1rem;height:1rem;flex-shrink:0;">
+        <svg class="theme-toggle__moon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M17.5 11.5A7.5 7.5 0 0 1 8.5 2.5a7.5 7.5 0 1 0 9 9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
         </svg>
         Toggle theme
@@ -321,28 +105,28 @@
           <div class="card" data-reveal>
             <div class="card__body">
               <p class="card__eyebrow">Total views</p>
-              <p class="stat__value" style="font-size: var(--size-2xl);">24,381</p>
+              <p class="stat__value stat__value--compact">24,381</p>
               <p class="text-xs text-tertiary mt-2">↑ 12% from last month</p>
             </div>
           </div>
           <div class="card" data-reveal data-reveal-delay="60">
             <div class="card__body">
               <p class="card__eyebrow">Published</p>
-              <p class="stat__value" style="font-size: var(--size-2xl);">18</p>
+              <p class="stat__value stat__value--compact">18</p>
               <p class="text-xs text-tertiary mt-2">3 drafts pending</p>
             </div>
           </div>
           <div class="card" data-reveal data-reveal-delay="120">
             <div class="card__body">
               <p class="card__eyebrow">Avg. read time</p>
-              <p class="stat__value" style="font-size: var(--size-2xl);">6.2m</p>
+              <p class="stat__value stat__value--compact">6.2m</p>
               <p class="text-xs text-tertiary mt-2">↑ 0.4m from last month</p>
             </div>
           </div>
           <div class="card" data-reveal data-reveal-delay="180">
             <div class="card__body">
               <p class="card__eyebrow">Subscribers</p>
-              <p class="stat__value" style="font-size: var(--size-2xl);">1,042</p>
+              <p class="stat__value stat__value--compact">1,042</p>
               <p class="text-xs text-tertiary mt-2">↑ 38 this week</p>
             </div>
           </div>
@@ -350,13 +134,13 @@
 
         <!-- Content table -->
         <div class="card" data-reveal>
-          <div class="card__body" style="padding-block-end: 0;">
-            <div class="flex items-center justify-between mb-4">
-              <h2 style="font-size: var(--size-md);">Recent content</h2>
+          <div class="card__body card__body--flush-bottom">
+            <div class="card__section-header">
+              <h2 class="card__section-title">Recent content</h2>
               <a href="sidebar.html" class="btn btn--ghost btn--sm">View all</a>
             </div>
           </div>
-          <div class="data-table-wrapper" style="border: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+          <div class="data-table-wrapper data-table-wrapper--inset">
             <table class="data-table">
               <thead>
                 <tr>
@@ -370,61 +154,61 @@
               </thead>
               <tbody>
                 <tr>
-                  <td><a href="article.html" style="color: var(--text-primary); font-weight: var(--weight-medium); text-decoration: underline; text-decoration-color: var(--border-subtle);">Understanding CSS Cascade Layers</a></td>
+                  <td><a href="article.html" class="data-table__link">Understanding CSS Cascade Layers</a></td>
                   <td><span class="status status--live">Live</span></td>
                   <td>CSS Architecture</td>
                   <td>4,820</td>
                   <td>
                     <div class="sparkline" aria-label="Trending upward">
-                      <div class="sparkline__bar" style="height: 40%"></div>
-                      <div class="sparkline__bar" style="height: 55%"></div>
-                      <div class="sparkline__bar" style="height: 45%"></div>
-                      <div class="sparkline__bar" style="height: 70%"></div>
-                      <div class="sparkline__bar" style="height: 65%"></div>
-                      <div class="sparkline__bar" style="height: 90%"></div>
-                      <div class="sparkline__bar" style="height: 100%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 40%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 55%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 45%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 70%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 65%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 90%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 100%"></div>
                     </div>
                   </td>
                   <td>Mar 1, 2025</td>
                 </tr>
                 <tr>
-                  <td><a href="article.html" style="color: var(--text-primary); font-weight: var(--weight-medium); text-decoration: underline; text-decoration-color: var(--border-subtle);">The Three-Tier Token Hierarchy</a></td>
+                  <td><a href="article.html" class="data-table__link">The Three-Tier Token Hierarchy</a></td>
                   <td><span class="status status--live">Live</span></td>
                   <td>Design Systems</td>
                   <td>3,102</td>
                   <td>
                     <div class="sparkline" aria-label="Steady">
-                      <div class="sparkline__bar" style="height: 60%"></div>
-                      <div class="sparkline__bar" style="height: 65%"></div>
-                      <div class="sparkline__bar" style="height: 58%"></div>
-                      <div class="sparkline__bar" style="height: 62%"></div>
-                      <div class="sparkline__bar" style="height: 70%"></div>
-                      <div class="sparkline__bar" style="height: 65%"></div>
-                      <div class="sparkline__bar" style="height: 68%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 60%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 65%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 58%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 62%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 70%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 65%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 68%"></div>
                     </div>
                   </td>
                   <td>Feb 12, 2025</td>
                 </tr>
                 <tr>
-                  <td><a href="article.html" style="color: var(--text-primary); font-weight: var(--weight-medium); text-decoration: underline; text-decoration-color: var(--border-subtle);">Dark Mode Without the Complexity</a></td>
+                  <td><a href="article.html" class="data-table__link">Dark Mode Without the Complexity</a></td>
                   <td><span class="status status--live">Live</span></td>
                   <td>CSS</td>
                   <td>2,655</td>
                   <td>
                     <div class="sparkline" aria-label="Moderate">
-                      <div class="sparkline__bar" style="height: 80%"></div>
-                      <div class="sparkline__bar" style="height: 70%"></div>
-                      <div class="sparkline__bar" style="height: 60%"></div>
-                      <div class="sparkline__bar" style="height: 55%"></div>
-                      <div class="sparkline__bar" style="height: 50%"></div>
-                      <div class="sparkline__bar" style="height: 45%"></div>
-                      <div class="sparkline__bar" style="height: 40%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 80%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 70%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 60%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 55%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 50%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 45%"></div>
+                      <div class="sparkline__bar" style="--bar-height: 40%"></div>
                     </div>
                   </td>
                   <td>Jan 20, 2025</td>
                 </tr>
                 <tr>
-                  <td><em style="color: var(--text-secondary);">Container Queries in Practice</em></td>
+                  <td><span class="data-table__cell--muted">Container Queries in Practice</span></td>
                   <td><span class="status status--draft">Draft</span></td>
                   <td>CSS Architecture</td>
                   <td>—</td>
@@ -432,7 +216,7 @@
                   <td>Mar 10, 2025</td>
                 </tr>
                 <tr>
-                  <td><em style="color: var(--text-secondary);">Figma to Style Dictionary</em></td>
+                  <td><span class="data-table__cell--muted">Figma to Style Dictionary</span></td>
                   <td><span class="status status--review">In review</span></td>
                   <td>Tooling</td>
                   <td>—</td>
